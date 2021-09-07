@@ -9,6 +9,7 @@ public final class UuidUtil {
     public static byte[] toByteArray(UUID uuid) {
         byte[] result = new byte[BYTES];
         toByteArray(uuid, result, 0);
+        // hello
         return result;
     }
     public static void toByteArray(UUID uuid, byte[] byteArray, int offset) {
