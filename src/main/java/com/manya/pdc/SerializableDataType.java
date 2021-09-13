@@ -12,7 +12,6 @@ public final class SerializableDataType<Z> implements PersistentDataType<byte[],
     private final Class<Z> complexType;
 
     public SerializableDataType(Class<Z> complexType) {
-
         this.complexType = complexType;
     }
     @Override
@@ -48,7 +47,7 @@ public final class SerializableDataType<Z> implements PersistentDataType<byte[],
             ois.close();
             return complex;
         } catch (IOException | ClassNotFoundException e) {
-            throw new SerializationException("failed to deserialize bytes.", e);
+            throw new SerializationException("failed to deserialize " + complexType, e);
         }
     }
 }
