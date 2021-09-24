@@ -1,13 +1,13 @@
 package com.manya.pdc;
 
+import com.google.gson.GsonBuilder;
 import com.manya.pdc.array.DoubleArrayDataType;
 import com.manya.pdc.array.FloatArrayDataType;
 import com.manya.pdc.array.ShortArrayDataType;
 import com.manya.pdc.array.StringArrayDataType;
 import com.manya.pdc.collection.*;
-import com.manya.pdc.collection.primitive.*;
 import net.kyori.adventure.text.Component;
-import org.bukkit.persistence.PersistentDataContainer;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*;
+
 public final class DataTypes {
     private DataTypes() {
         throw new UnsupportedOperationException("no");
@@ -27,7 +29,7 @@ public final class DataTypes {
     public static final UuidDataType UUID = new UuidDataType();
     public static final ItemStackDataType ITEM_STACK = new ItemStackDataType();
     public static final NamespacedKeyDataType NAMESPACED_KEY = new NamespacedKeyDataType();
-    public static final ComponentDataType COMPONENT = new ComponentDataType();
+    public static final GsonDataType<Component> COMPONENT = new GsonDataType<>(gson().populator().apply(new GsonBuilder()).create(), Component.class);
     public static final BooleanDataType BOOLEAN = new BooleanDataType();
 
 
@@ -41,67 +43,9 @@ public final class DataTypes {
         return new EnumDataType<>(enumClass);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <A, Z extends Collection<E>, E> CollectionDataType<A, Z, E, ?>
+    public static <A, Z extends Collection<E>, E> PersistentDataType<?, Z>
     collection(Collector<E, A, Z> collector, PersistentDataType<?, E> elementDataType) {
-        Class<?> primitive = elementDataType.getPrimitiveType();
-        if(primitive == PersistentDataContainer.class) {
-            return new ArrayCollectionDataType<>(
-                    collector,
-                    castType(elementDataType),
-                    PersistentDataType.TAG_CONTAINER_ARRAY,
-                    PersistentDataContainer[]::new
-            );
-        } else if(primitive == String.class) {
-            return new ArrayCollectionDataType<>(
-                    collector,
-                    (PersistentDataType<String, E>) elementDataType,
-                    STRING_ARRAY,
-                    String[]::new
-            );
-        } else if(primitive == byte[].class || primitive == Byte[].class) {
-            if(!(elementDataType instanceof ByteArrayDataType)) {
-                return new ByteArraysCollectionDataType<>(collector, (PersistentDataType<byte[], E>) elementDataType);
-            }
-            ByteArrayDataType<E> dt = (ByteArrayDataType<E>) elementDataType;
-            OptionalInt length = dt.getFixedLength();
-
-            return length.isPresent() ? new ByteArraysCollectionDataType<>(collector, dt, length.getAsInt()) :
-                    new ByteArraysCollectionDataType<>(collector, dt);
-
-        } else if(primitive == int.class || primitive == Integer.class) {
-            return new IntCollectionDataType<>(
-                    collector,
-                    castType(elementDataType)
-            );
-        } else if(primitive == long.class || primitive == Long.class) {
-            return new LongCollectionDataType<>(
-                    collector,
-                    castType(elementDataType)
-            );
-        } else if(primitive == byte.class || primitive == Byte.class) {
-            return new ByteCollectionDataType<>(
-                    collector,
-                    castType(elementDataType)
-            );
-        }  else if(primitive == short.class || primitive == Short.class) {
-            return new ShortCollectionDataType<>(
-                    collector,
-                    castType(elementDataType)
-                    );
-        } else if(primitive == float.class || primitive == Float.class) {
-            return new FloatCollectionDataType<>(
-                    collector,
-                    castType(elementDataType)
-            );
-        } else if(primitive == double.class || primitive == Double.class) {
-            return new DoubleCollectionDataType<>(
-                    collector,
-                    castType(elementDataType)
-            );
-        }  else {
-            return new DefaultCollectionDataType<>(collector, elementDataType);
-        }
+        return CollectionDataType.of(collector, elementDataType);
 
     }
 
@@ -109,32 +53,19 @@ public final class DataTypes {
         return new SerializableDataType<>(target);
     }
 
-    public static <A, E> CollectionDataType<A, List<E>, E, ?> list(PersistentDataType<?, E> elementDataType) {
+    public static <A, E> PersistentDataType<?, List<E>> list(PersistentDataType<?, E> elementDataType) {
         return collection(Collectors.toList(), elementDataType);
     }
-    public static <A, E> CollectionDataType<A, Set<E>, E, ?> set(PersistentDataType<?, E> elementDataType) {
+    public static <A, E> PersistentDataType<?, Set<E>> set(PersistentDataType<?, E> elementDataType) {
         return collection(Collectors.toSet(), elementDataType);
     }
-    public static <A, Z extends Collection<Component>> ComponentCollectionDataType<A, Z> componentCollection(Collector<Component, A, Z> collector) {
-        return new ComponentCollectionDataType<>(collector);
-    }
-    public static <A> ComponentCollectionDataType<A, List<Component>> componentList() {
-        return componentCollection(Collectors.toList());
-    }
-    public static <A> ComponentCollectionDataType<A, Set<Component>> componentSet() {
-        return componentCollection(Collectors.toSet());
-    }
+
     public static StringArrayDataType stringArray(Charset charset) {
         return new StringArrayDataType(charset);
     }
 
     public static LocationDataType location(Plugin plugin) {
         return new LocationDataType(plugin);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T, E> PersistentDataType<T, E> castType(PersistentDataType<?, E> type) {
-        return (PersistentDataType<T, E>) type;
     }
 
 

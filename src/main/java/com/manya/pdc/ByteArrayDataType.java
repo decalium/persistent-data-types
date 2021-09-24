@@ -14,8 +14,6 @@ public interface ByteArrayDataType<Z> extends PersistentDataType<byte[], Z> {
         return byte[].class;
     }
 
-    default OptionalInt getFixedLength() {
-        return OptionalInt.empty();
-    }
+    int getFixedLength();
 
 }

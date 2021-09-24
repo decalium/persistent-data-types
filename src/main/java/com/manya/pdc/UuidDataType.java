@@ -1,7 +1,7 @@
 package com.manya.pdc;
 
 import org.bukkit.persistence.PersistentDataAdapterContext;
-import com.manya.UuidUtil;
+import com.manya.util.UuidUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.OptionalInt;
@@ -15,12 +15,13 @@ public final class UuidDataType implements ByteArrayDataType<UUID> {
     }
 
     @Override
-    public OptionalInt getFixedLength() {
-        return OptionalInt.of(UuidUtil.BYTES);
+    public int getFixedLength() {
+        return UuidUtil.BYTES;
     }
 
     @Override
     public byte @NotNull [] toPrimitive(@NotNull UUID complex, @NotNull PersistentDataAdapterContext context) {
+
         return UuidUtil.toByteArray(complex);
     }
 

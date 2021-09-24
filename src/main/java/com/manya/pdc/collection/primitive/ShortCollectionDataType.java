@@ -27,7 +27,7 @@ public class ShortCollectionDataType<A, Z extends Collection<E>, E> extends Type
     public @NotNull Z fromPrimitive(byte @NotNull [] primitive, @NotNull PersistentDataAdapterContext context) {
         A container = getCollector().supplier().get();
         ByteBuffer buffer = ByteBuffer.wrap(primitive);
-        while(buffer.remaining() >= 2) {
+        while(buffer.remaining() >= Short.BYTES) {
             getCollector().accumulator().accept(container, elementDataType.fromPrimitive(buffer.getShort(), context));
         }
 

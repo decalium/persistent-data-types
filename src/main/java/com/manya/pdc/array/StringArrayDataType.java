@@ -1,6 +1,7 @@
 package com.manya.pdc.array;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +21,6 @@ public class StringArrayDataType implements PersistentDataType<byte[], String[]>
      * @param charset - charset to serialize/deserialize string with
      */
     public StringArrayDataType(Charset charset) {
-
         this.charset = charset;
     }
 
@@ -39,7 +39,8 @@ public class StringArrayDataType implements PersistentDataType<byte[], String[]>
         int totalSize = 0;
         for(String s : complex) totalSize += s.length();
         totalSize += Integer.BYTES * complex.length;
-        ByteBuffer buffer = ByteBuffer.allocate(totalSize);
+        ByteBuffer buffer = ByteBuffer.allocate(totalSize + Integer.BYTES);
+        buffer.putInt(totalSize);
         for(String s : complex) {
             buffer.putInt(s.length());
             buffer.put(s.getBytes(charset));
@@ -49,15 +50,17 @@ public class StringArrayDataType implements PersistentDataType<byte[], String[]>
 
     @Override
     public String @NotNull [] fromPrimitive(byte @NotNull [] primitive, @NotNull PersistentDataAdapterContext context) {
-        ArrayList<String> strings = new ArrayList<>();
         ByteBuffer buffer = ByteBuffer.wrap(primitive);
-        while(buffer.remaining() >= Integer.BYTES) {
+        int totalSize = buffer.getInt();
+        String[] result = new String[totalSize];
+        for(int i = 0; i < totalSize; i++) {
             int length = buffer.getInt();
-            Preconditions.checkState(buffer.remaining() >= length);
+            Preconditions.checkState(buffer.remaining() >= length, "corrupted input");
             byte[] raw = new byte[length];
             buffer.get(raw);
-            strings.add(new String(raw, charset));
+            result[i] = new String(raw, charset);
         }
-        return strings.toArray(EMPTY_STRING_ARRAY);
+        return result;
     }
+
 }
