@@ -10,7 +10,7 @@ import java.util.function.Function;
  * an interface that represents factory of NamespacedKeys. I hate typing long constructor calls!
  */
 @FunctionalInterface
-public interface KeyFactory extends Function<String, NamespacedKey> {
+public interface KeyFactory {
     /**
      * key factory implementation with minecraft namespace
      */
@@ -24,14 +24,7 @@ public interface KeyFactory extends Function<String, NamespacedKey> {
     @NotNull
     NamespacedKey create(@NotNull String value);
 
-    /**
-     * does the same thing as create
-     *
-     */
-    @Override
-    default NamespacedKey apply(String value) {
-        return create(value);
-    }
+
 
     /**
      * Creates a PluginKeyFactory based on given plugin

@@ -1,6 +1,10 @@
 package com.manya.util;
 
 import com.google.common.collect.ImmutableBiMap;
+import com.google.common.reflect.Reflection;
+import com.google.common.reflect.TypeToken;
+
+import java.lang.reflect.Array;
 
 public final class Wrappers {
     private Wrappers() {
@@ -20,10 +24,17 @@ public final class Wrappers {
 
     @SuppressWarnings("unchecked")
     public static <T> Class<T> wrap(Class<T> primitive) {
+        if(primitive.isArray()) {
+            return (Class<T>) Array.newInstance(wrap(primitive.getComponentType()), 0).getClass();
+        }
+
         return (Class<T>) WRAPPERS.getOrDefault(primitive, primitive);
     }
     @SuppressWarnings("unchecked")
     public static <T> Class<T> unwrap(Class<T> wrapper) {
+        if(wrapper.isArray()) {
+            return (Class<T>) Array.newInstance(unwrap(wrapper.getComponentType()), 0).getClass();
+        }
         return (Class<T>) WRAPPERS.inverse().getOrDefault(wrapper, wrapper);
     }
 

@@ -1,9 +1,11 @@
 plugins {
     java
+    `maven-publish`
 }
 
 group = "com.manya"
 version = "1.0"
+
 
 repositories {
     mavenCentral()
@@ -12,7 +14,28 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT")
+    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    implementation("com.google.code.gson:gson:2.8.9")
 
 }
 
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            groupId = "com.manya"
+            artifactId = "persistent-data-types"
+            version = "1.0"
+
+            from(components["java"])
+        }
+    }
+}
+
+
+
+tasks {
+    build {
+        dependsOn(publishToMavenLocal)
+    }
+}
