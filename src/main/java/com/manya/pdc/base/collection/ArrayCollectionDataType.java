@@ -5,6 +5,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.function.IntFunction;
 import java.util.stream.Collector;
 
@@ -22,22 +23,23 @@ public final class ArrayCollectionDataType<A, Z extends Collection<E>, E, T, K> 
 
     @Override
     public @NotNull K toPrimitive(@NotNull Z complex, @NotNull PersistentDataAdapterContext context) {
-        T[] array = arrayCreator.apply(complex.size());
-        int cursor = 0;
-        for(E element : complex) {
-            array[cursor] = elementDataType.toPrimitive(element, context);
-            cursor++;
+        int size = complex.size();
+        T[] array = arrayCreator.apply(size);
+        Iterator<E> iterator = complex.iterator();
+        for(int i = 0; i < size; i++) {
+            array[i] = elementDataType.toPrimitive(iterator.next(), context);
         }
+
         return arrayDataType.toPrimitive(array, context);
     }
 
     @Override
     public @NotNull Z fromPrimitive(@NotNull K primitive, @NotNull PersistentDataAdapterContext context) {
         T[] array = arrayDataType.fromPrimitive(primitive, context);
-        A container = getCollector().supplier().get();
+        A container = createContainer();
         for(T t : array) {
-            getCollector().accumulator().accept(container, elementDataType.fromPrimitive(t, context));
+            accumulate(container, elementDataType.fromPrimitive(t, context));
         }
-        return getCollector().finisher().apply(container);
+        return finish(container);
     }
 }

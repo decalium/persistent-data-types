@@ -1,23 +1,24 @@
 package com.manya.pdc.base.collection;
 
-import com.manya.pdc.ByteArrayDataType;
+import com.google.common.primitives.Primitives;
 import com.manya.pdc.DataTypes;
-import com.manya.pdc.base.GsonDataType;
+import com.manya.pdc.gson.GsonDataType;
 import com.manya.pdc.base.SerializableDataType;
 import com.manya.pdc.base.collection.primitive.*;
-import com.manya.util.Wrappers;
+import com.manya.pdc.gson.CollectionTypeAdapter;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Collector;
 
 public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> implements PersistentDataType<T, Z> {
 
     private final Class<Z> complexType;
     private final Class<T> primitiveType;
-    private final Collector<E, A, Z> collector;
+    protected final Collector<E, A, Z> collector;
 
     public CollectionDataType(Collector<E, A, Z> collector, Class<T> primitiveType) {
         this.collector = collector;
@@ -26,8 +27,16 @@ public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> imple
     }
 
 
-    protected Collector<E, A, Z> getCollector() {
-        return collector;
+    protected A createContainer() {
+        return collector.supplier().get();
+    }
+
+    protected void accumulate(A container, E element) {
+        collector.accumulator().accept(container, element);
+    }
+
+    protected Z finish(A container) {
+      return collector.finisher().apply(container);
     }
 
 
@@ -46,21 +55,23 @@ public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> imple
         return (Class<R>) collector.finisher().apply(collector.supplier().get()).getClass();
     }
 
+
     @SuppressWarnings("unchecked")
     public static <A, Z extends Collection<E>, E> PersistentDataType<?, Z>
     of(Collector<E, A, Z> collector, PersistentDataType<?, E> elementDataType) {
-        Class<?> primitive = Wrappers.unwrap(elementDataType.getPrimitiveType());
+        Objects.requireNonNull(collector, "collector");
+        Objects.requireNonNull(elementDataType, "elementDataType");
+
+        Class<?> primitive = Primitives.unwrap(elementDataType.getPrimitiveType());
+
         if(elementDataType instanceof GsonDataType) {
-            return new GsonDataType<>(
-                    ((GsonDataType<?>) elementDataType).getGson(),
-                    getCollectionClass(collector)
-            );
+            GsonDataType<E> gsonDataType = (GsonDataType<E>) elementDataType;
+            return new GsonDataType<>(new CollectionTypeAdapter<>(collector, gsonDataType.getAdapter()), getCollectionClass(collector));
         }
 
         if(elementDataType instanceof SerializableDataType) {
             return new SerializableCollectionDataType<>(collector, elementDataType.getComplexType());
         }
-
         if(primitive == PersistentDataContainer.class) {
             return new ArrayCollectionDataType<>(
                     collector,
@@ -76,12 +87,7 @@ public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> imple
                     String[]::new
             );
         } else if(primitive == byte[].class) {
-            if(!(elementDataType instanceof ByteArrayDataType)) {
-                return new ByteArraysCollectionDataType<>(collector, (PersistentDataType<byte[], E>) elementDataType);
-            }
-            ByteArrayDataType<E> dt = (ByteArrayDataType<E>) elementDataType;
-            return new ByteArraysCollectionDataType<>(collector, dt);
-
+            return new ByteArraysCollectionDataType<>(collector, (PersistentDataType<byte[], E>) elementDataType);
         } else if(primitive == int.class) {
             return new IntCollectionDataType<>(
                     collector,
@@ -117,7 +123,6 @@ public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> imple
         }
 
     }
-
 
 
 

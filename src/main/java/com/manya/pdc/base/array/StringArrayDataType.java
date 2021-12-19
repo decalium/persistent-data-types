@@ -7,18 +7,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
-/**
- * String array data type. Uses BYTE_ARRAY internally
- */
+
 public class StringArrayDataType implements PersistentDataType<byte[], String[]> {
     private final Charset charset;
-    /**
-     *  Creates a StringArrayDataType instance with given charset.
-     * @param charset - charset to serialize/deserialize string with
-     */
     public StringArrayDataType(Charset charset) {
-        this.charset = charset;
+        this.charset = Objects.requireNonNull(charset, "charset");
     }
 
     @Override

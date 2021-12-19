@@ -15,6 +15,7 @@ public interface KeyFactory {
      * key factory implementation with minecraft namespace
      */
     MinecraftKeyFactory MINECRAFT = new MinecraftKeyFactory();
+    KeyFactory DECALIUM = new DecaliumKeyFactory();
 
     /**
      * Creates an namespacedKey with given value

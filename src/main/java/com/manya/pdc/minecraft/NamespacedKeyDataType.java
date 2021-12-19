@@ -1,5 +1,6 @@
 package com.manya.pdc.minecraft;
 
+import com.google.common.base.MoreObjects;
 import org.bukkit.NamespacedKey;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
@@ -26,5 +27,20 @@ public final class NamespacedKeyDataType implements PersistentDataType<String, N
     @Override
     public @NotNull NamespacedKey fromPrimitive(@NotNull String primitive, @NotNull PersistentDataAdapterContext context) {
         return Objects.requireNonNull(NamespacedKey.fromString(primitive), "invalid key format");
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof NamespacedKeyDataType;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).toString();
     }
 }

@@ -1,5 +1,6 @@
 package com.manya.pdc.base;
 
+import com.google.common.base.MoreObjects;
 import com.manya.pdc.ByteArrayDataType;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import com.manya.util.UuidUtil;
@@ -28,5 +29,15 @@ public final class UuidDataType implements ByteArrayDataType<UUID> {
     @Override
     public @NotNull UUID fromPrimitive(byte @NotNull [] primitive, @NotNull PersistentDataAdapterContext context) {
         return UuidUtil.fromByteArray(primitive);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof UuidDataType;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).toString();
     }
 }

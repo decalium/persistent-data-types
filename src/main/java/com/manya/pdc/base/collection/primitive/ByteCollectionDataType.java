@@ -1,19 +1,16 @@
 package com.manya.pdc.base.collection.primitive;
 
+import com.google.common.base.MoreObjects;
 import com.manya.pdc.base.collection.TypeBasedCollectionDataType;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.stream.Collector;
 
-/**
- * A data type for collections with Byte element.
- * @param <A> - Mutable Container of Collection
- * @param <Z> - Collection itself
- * @param <E> - Element
- */
+
 public class ByteCollectionDataType<A, Z extends Collection<E>, E> extends TypeBasedCollectionDataType<A, Z, E, Byte, byte[]> {
     public ByteCollectionDataType(Collector<E, A, Z> collector, PersistentDataType<Byte, E> elementDataType) {
         super(collector, byte[].class, elementDataType);
@@ -21,22 +18,30 @@ public class ByteCollectionDataType<A, Z extends Collection<E>, E> extends TypeB
 
     @Override
     public byte @NotNull [] toPrimitive(@NotNull Z complex, @NotNull PersistentDataAdapterContext context) {
-        byte[] bytes = new byte[complex.size()];
-        int cursor = 0;
-        for(E element : complex) {
-            bytes[cursor] = elementDataType.toPrimitive(element, context);
-            cursor++;
+        int size = complex.size();
+        byte[] bytes = new byte[size];
+        Iterator<E> iterator = complex.iterator();
+        for(int i = 0; i < size; i++) {
+            bytes[i] = elementDataType.toPrimitive(iterator.next(), context);
         }
         return bytes;
     }
 
     @Override
     public @NotNull Z fromPrimitive(byte @NotNull [] primitive, @NotNull PersistentDataAdapterContext context) {
-        A container = getCollector().supplier().get();
+        A container = createContainer();
         for(byte b : primitive) {
-            getCollector().accumulator().accept(container, elementDataType.fromPrimitive(b, context));
+            accumulate(container, elementDataType.fromPrimitive(b, context));
         }
 
-        return getCollector().finisher().apply(container);
+        return finish(container);
     }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .toString();
+    }
+
+
 }

@@ -6,6 +6,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.stream.Collector;
 
 public class IntCollectionDataType<A, Z extends Collection<E>, E> extends TypeBasedCollectionDataType<A, Z, E, Integer, int[]> {
@@ -15,21 +16,21 @@ public class IntCollectionDataType<A, Z extends Collection<E>, E> extends TypeBa
 
     @Override
     public int @NotNull [] toPrimitive(@NotNull Z complex, @NotNull PersistentDataAdapterContext context) {
-        int[] ints = new int[complex.size()];
-        int cursor = 0;
-        for(E element : complex) {
-            ints[cursor] = elementDataType.toPrimitive(element, context);
-            cursor++;
+        int size = complex.size();
+        int[] ints = new int[size];
+        Iterator<E> iterator = complex.iterator();
+        for(int i = 0; i < size; i++) {
+            ints[i] = elementDataType.toPrimitive(iterator.next(), context);
         }
         return ints;
     }
 
     @Override
     public @NotNull Z fromPrimitive(int @NotNull [] primitive, @NotNull PersistentDataAdapterContext context) {
-        A container = getCollector().supplier().get();
+        A container = createContainer();
         for(int i : primitive) {
-            getCollector().accumulator().accept(container, elementDataType.fromPrimitive(i, context));
+            accumulate(container, elementDataType.fromPrimitive(i, context));
         }
-        return getCollector().finisher().apply(container);
+        return finish(container);
     }
 }

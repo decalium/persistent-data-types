@@ -13,4 +13,6 @@ public abstract class TypeBasedCollectionDataType<A, Z extends Collection<E>, E,
         super(collector, primitiveType);
         this.elementDataType = elementDataType;
     }
+
+
 }

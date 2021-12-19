@@ -48,11 +48,11 @@ public final class ByteArraysCollectionDataType<A, Z extends Collection<E>, E> e
     @Override
     public @NotNull Z fromPrimitive(byte @NotNull [] primitive, @NotNull PersistentDataAdapterContext context) {
         byte[][] bytes = bytePackager.unpack(primitive);
-        A container = getCollector().supplier().get();
+        A container = createContainer();
         for (byte[] b : bytes) {
-            getCollector().accumulator().accept(container, elementDataType.fromPrimitive(b, context));
+            accumulate(container, elementDataType.fromPrimitive(b, context));
         }
-        return getCollector().finisher().apply(container);
+        return finish(container);
 
     }
 

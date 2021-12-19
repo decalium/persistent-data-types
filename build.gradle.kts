@@ -14,7 +14,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+    implementation("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.8.9")
 
 }

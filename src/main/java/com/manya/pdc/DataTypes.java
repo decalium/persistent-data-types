@@ -1,96 +1,214 @@
 package com.manya.pdc;
 
-import com.google.gson.GsonBuilder;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
 import com.manya.key.KeyFactory;
 import com.manya.pdc.base.*;
 import com.manya.pdc.base.array.*;
 import com.manya.pdc.base.collection.*;
-import com.manya.pdc.base.map.MapDataType;
+import com.manya.pdc.gson.GsonDataType;
 import com.manya.pdc.minecraft.ItemStackDataType;
 import com.manya.pdc.minecraft.LocationDataType;
 import com.manya.pdc.minecraft.NamespacedKeyDataType;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import org.bukkit.Server;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 
-import javax.management.InstanceNotFoundException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import static net.kyori.adventure.text.serializer.gson.GsonComponentSerializer.*;
+import static java.util.Objects.*;
 
+/**
+ * A class containing useful Persistent data types and factory methods to create them
+ */
 public final class DataTypes {
     private DataTypes() {
-        throw new UnsupportedOperationException("no");
+        throw new UnsupportedOperationException("no"); // instantiation is not supported, really
     }
 
-
+    /**
+     * UUID data type.
+     */
     public static final UuidDataType UUID = new UuidDataType();
+    /**
+     * ItemStack data type.
+     */
     public static final ItemStackDataType ITEM_STACK = new ItemStackDataType();
+    /**
+     * Namespaced key data type.
+     */
     public static final NamespacedKeyDataType NAMESPACED_KEY = new NamespacedKeyDataType();
-    public static final GsonDataType<Component> COMPONENT = new GsonDataType<>(gson().populator().apply(new GsonBuilder()).create(), Component.class);
+    /**
+     * Adventure's Component data type.
+     */
+    public static final GsonDataType<Component> COMPONENT = new GsonDataType<>(GsonComponentSerializer.gson().serializer().getAdapter(Component.class), Component.class);
+
+
+    /**
+     * Boolean data type.
+     */
     public static final BooleanDataType BOOLEAN = new BooleanDataType();
-
-
-
+    /**
+     * Boolean array data type. Uses bit set
+     */
     public static final BooleanArrayDataType BOOLEAN_ARRAY = new BooleanArrayDataType();
+    /**
+     * String array data type.
+     */
     public static final StringArrayDataType STRING_ARRAY = stringArray(StandardCharsets.UTF_8);
+    /**
+     * Float array data type.
+     */
     public static final FloatArrayDataType FLOAT_ARRAY = new FloatArrayDataType();
+    /**
+     * Double array data type.
+     */
     public static final DoubleArrayDataType DOUBLE_ARRAY = new DoubleArrayDataType();
+
+    /**
+     * Short array data type.
+     */
     public static final ShortArrayDataType SHORT_ARRAY = new ShortArrayDataType();
 
+
+    /**
+     * Instant data type.
+     */
     public static final InstantDataType INSTANT = new InstantDataType();
+    /**
+     * Duration data type.
+     */
     public static final DurationDataType DURATION = new DurationDataType();
 
 
-    public static <E extends Enum<E>> EnumDataType<E> enumType(Class<E> enumClass) {
+    /**
+     * Creates a new data type for given enum class.
+     *
+     * @param enumClass enum class
+     * @param <E>       enum type
+     * @return enum data type
+     */
+    public static <E extends Enum<E>> EnumDataType<E> enumType(@NotNull Class<E> enumClass) {
         return new EnumDataType<>(enumClass);
     }
 
+    /**
+     * Creates the most efficient collection data type for given element type.
+     * <pre> {@code
+     *
+     *  PersistentDataType<?, ImmutableList<ItemStack>> ITEM_LIST = DataTypes.collection(ImmutableList.toImmutableList(), DataTypes.ITEM_STACK);
+     *  PersistentDataType<?, Set<Component>> COMPONENT_SET = DataTypes.collection(Collectors.toSet(), DataTypes.COMPONENT);
+     *
+     *  }</pre>
+     *
+     * @param collector       collection's collector
+     * @param elementDataType persistent data type of element
+     * @param <A>             collector's container type
+     * @param <Z>             collection type
+     * @param <E>             element type
+     * @return collection data type
+     */
     public static <A, Z extends Collection<E>, E> PersistentDataType<?, Z>
-    collection(Collector<E, A, Z> collector, PersistentDataType<?, E> elementDataType) {
+    collection(@NotNull Collector<E, A, Z> collector, @NotNull PersistentDataType<?, E> elementDataType) {
         return CollectionDataType.of(collector, elementDataType);
     }
 
-    public static <T> SerializableDataType<T> serializable(Class<T> target) {
+    /**
+     * Creates a serializable data type for given class. Java byte serialization will be used here.
+     *
+     * @param target target class
+     * @param <T>    target type
+     * @return serializable data type
+     */
+    public static <T> SerializableDataType<T> serializable(@NotNull Class<T> target) {
         return new SerializableDataType<>(target);
     }
 
-    public static <E> PersistentDataType<?, List<E>> list(PersistentDataType<?, E> elementDataType) {
+    /**
+     * Creates the most efficient list data type for given element type
+     *
+     * @param elementDataType element data type
+     * @param <E>             element type
+     * @return data type for list
+     */
+    public static <E> PersistentDataType<?, List<E>> list(@NotNull PersistentDataType<?, E> elementDataType) {
         return collection(Collectors.toList(), elementDataType);
     }
-    public static <E> PersistentDataType<?, Set<E>> set(PersistentDataType<?, E> elementDataType) {
+
+    /**
+     * Creates the most efficient set data type for given element type
+     *
+     * @param elementDataType element data type
+     * @param <E>             element type
+     * @return data type for set
+     */
+    public static <E> PersistentDataType<?, Set<E>> set(@NotNull PersistentDataType<?, E> elementDataType) {
         return collection(Collectors.toSet(), elementDataType);
     }
 
-    /* public static <A, M extends Map<K, V>, K, V> PersistentDataType<?, M> map(PersistentDataType<?, K> keyDataType, PersistentDataType<?, V> valueDataType) {
-        return new MapDataType<>(KeyFactory.minecraft(), keyDataType, valueDataType, Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
-    } */
+    /**
+     * Creates a new gson data type. Objects will be serialized as strings.
+     *
+     * @param adapter     type adapter
+     * @param targetClass target class
+     * @param <T>         target type
+     * @return gson data type
+     */
+    public static <T> GsonDataType<T> gson(@NotNull TypeAdapter<T> adapter, @NotNull Class<T> targetClass) {
+        return new GsonDataType<>(adapter, targetClass);
+    }
 
-    public static StringArrayDataType stringArray(Charset charset) {
+    /**
+     * Creates a new gson data type. Objects will be serialized as strings.
+     *
+     * @param gson        gson
+     * @param targetClass target class
+     * @param <T>         target type
+     * @return gson data type
+     */
+    public static <T> GsonDataType<T> gson(@NotNull Gson gson, @NotNull Class<T> targetClass) {
+        return gson(gson.getAdapter(targetClass), targetClass);
+    }
+
+    /**
+     * Creates a new String array data type for given charset.
+     *
+     * @param charset charset to serialize/deserialize string with
+     * @return string array data type.
+     */
+    public static StringArrayDataType stringArray(@NotNull Charset charset) {
         return new StringArrayDataType(charset);
     }
 
-    public static LocationDataType location(Plugin plugin) {
-        return new LocationDataType(plugin);
+    /**
+     * Creates a location data type.
+     *
+     * @param plugin owning plugin.
+     * @return location data type.
+     */
+    public static LocationDataType location(@NotNull Plugin plugin) {
+        requireNonNull(plugin, "plugin cannot be null!");
+        return location(plugin.getServer(), KeyFactory.plugin(plugin));
     }
 
-
-
-
-
-
-
-
-
+    /**
+     * Creates a location data type.
+     *
+     * @param server     server to get worlds from
+     * @param keyFactory factory of keys. used to create keys
+     * @return location data type
+     */
+    public static LocationDataType location(@NotNull Server server, @NotNull KeyFactory keyFactory) {
+        return new LocationDataType(server, keyFactory);
+    }
 
 
 }

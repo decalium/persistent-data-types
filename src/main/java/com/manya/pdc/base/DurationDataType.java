@@ -1,5 +1,6 @@
 package com.manya.pdc.base;
 
+import com.google.common.base.MoreObjects;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -35,5 +36,16 @@ public final class DurationDataType implements PersistentDataType<byte[], Durati
         long seconds = buffer.getLong();
         int nanos = buffer.getInt();
         return Duration.ofSeconds(seconds, nanos);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof DurationDataType;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .toString();
     }
 }

@@ -1,5 +1,6 @@
 package com.manya.pdc.base;
 
+import com.google.common.base.MoreObjects;
 import com.manya.pdc.ByteArrayDataType;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.jetbrains.annotations.NotNull;
@@ -33,5 +34,16 @@ public final class InstantDataType implements ByteArrayDataType<Instant> {
         long seconds = buf.getLong();
         int nanos = buf.getInt();
         return Instant.ofEpochSecond(seconds, nanos);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof InstantDataType;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .toString();
     }
 }

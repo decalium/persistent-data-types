@@ -1,6 +1,6 @@
 package com.manya.pdc.base.collection;
 
-import org.apache.commons.lang.SerializationException;
+import com.destroystokyo.paper.util.SneakyThrow;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,8 +30,9 @@ public final class SerializableCollectionDataType<A, Z extends Collection<E>, E>
             oos.close();
             return bos.toByteArray();
         } catch (IOException e) {
-            throw new SerializationException("failed to serialize " + complex, e);
+            SneakyThrow.sneaky(e);
         }
+        return null;
     }
 
     @Override
@@ -40,16 +41,16 @@ public final class SerializableCollectionDataType<A, Z extends Collection<E>, E>
             ByteArrayInputStream bis = new ByteArrayInputStream(primitive);
             ObjectInputStream ois = new ObjectInputStream(bis);
             int size = ois.readInt();
-            A container = getCollector().supplier().get();
+            A container = createContainer();
             for(int i = 0; i < size; i++) {
-                getCollector().accumulator().accept(container, elementType.cast(ois.readObject()));
+                accumulate(container, elementType.cast(ois.readObject()));
             }
-
             ois.close();
-            return getCollector().finisher().apply(container);
+            return finish(container);
         } catch (IOException | ClassNotFoundException e) {
-            throw new SerializationException("failed to deserialize ", e);
+            SneakyThrow.sneaky(e);
         }
-
+        return null;
     }
+
 }
