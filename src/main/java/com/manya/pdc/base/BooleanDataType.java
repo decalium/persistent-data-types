@@ -1,6 +1,7 @@
 package com.manya.pdc.base;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Optional;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;

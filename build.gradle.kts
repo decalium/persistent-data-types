@@ -28,5 +28,15 @@ publishing {
             from(components["java"])
         }
     }
+    repositories {
+        maven {
+            name = "persistent-data-types" //  optional target repository name
+            url = uri("https://repo.decalium.ru/releases/")
+            credentials {
+                username = "root"
+                password = "qDQlH6WsPoJLZUEYQln6Vb9YDwdwb3Ad3diuZIi+uyAwA8ES09xiPvH3toqzkhks"
+            }
+        }
+    }
 }
 

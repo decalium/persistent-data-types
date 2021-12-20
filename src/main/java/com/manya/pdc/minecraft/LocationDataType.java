@@ -92,6 +92,8 @@ public class LocationDataType implements PersistentDataType<PersistentDataContai
                 pitchKey.equals(that.pitchKey);
     }
 
+
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
