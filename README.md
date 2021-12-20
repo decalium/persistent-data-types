@@ -4,31 +4,31 @@ Have you ever been dreaming of saving a list of itemstacks to the pdc in just si
 PersistentDataType<?, List<ItemStack>> ITEM_STACK_LIST = DataTypes.list(DataTypes.ITEM_STACK);
 ```
 
-##Features
+## Features
 - A lots of useful data types for gson, uuids, time, items and entities and such.
 - A powerful collection data type framework. In single line, you can pick the most compact, beautiful and 
 efficient implementation to store multiple elements at the same time.
 - Fast and lightweight serialization algorithms. Overhead is avoided at all cost.
 
-##Where can i find the list of data types?
+## Where can i find the list of data types?
 Honestly, i'm too lazy to sync docs with code. To see existing data types, jump at DataTypes class. 
 All methods and constants are documented and self-explanatory.
 
 
-##Okay, but how do i use them?
+## Okay, but how do i use them?
 
 Well, it is fine to use this library in 2 ways.
 Artifacts are posted on my repository.
 
-###Adding repository
+### Adding repository
 
-####gradle
+#### gradle
 ```kotlin
 maven {
     url = uri("https://repo.decalium.ru/releases")
 }
 ```
-####maven
+#### maven
 ```xml
 <repository>
   <id>decalium-repository-releases</id>
@@ -39,12 +39,12 @@ maven {
 
 And then, add the artifact:
 
-####gradle
+#### gradle
 ```kotlin
 implementation("com.manya:persistent-data-types:1.0")
 ```
 
-####maven
+#### maven
 ```xml
 <dependency>
   <groupId>com.manya</groupId>
