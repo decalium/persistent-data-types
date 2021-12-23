@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.manya"
-version = "1.0"
+version = "1.0.1"
 
 
 repositories {
@@ -23,7 +23,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = "com.manya"
             artifactId = "persistent-data-types"
-            version = "1.0"
+            version = version
 
             from(components["java"])
         }
@@ -33,8 +33,8 @@ publishing {
             name = "persistent-data-types" //  optional target repository name
             url = uri("https://repo.decalium.ru/releases/")
             credentials {
-                username = "root"
-                password = "qDQlH6WsPoJLZUEYQln6Vb9YDwdwb3Ad3diuZIi+uyAwA8ES09xiPvH3toqzkhks"
+                username = System.getenv("REPOSILITE_USER")
+                password = System.getenv("REPOSILITE_TOKEN")
             }
         }
     }

@@ -25,7 +25,7 @@ public class BooleanArrayDataType implements PersistentDataType<byte[], boolean[
             set.set(i, complex[i]);
         }
         byte[] bytes = set.toByteArray();
-        ByteBuffer buf = ByteBuffer.allocate(bytes.length + Integer.BYTES);
+        ByteBuffer buf = ByteBuffer.allocate(Integer.BYTES + bytes.length);
         buf.putInt(complex.length);
         buf.put(bytes);
         return buf.array();
