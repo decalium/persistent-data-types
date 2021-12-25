@@ -35,7 +35,7 @@ import java.util.UUID;
 
 import static java.util.Objects.*;
 
-public class LocationDataType implements PersistentDataType<PersistentDataContainer, Location> {
+public final class LocationDataType implements PersistentDataType<PersistentDataContainer, Location> {
     private static final float ZERO = 0;
     private final Server server;
     private final NamespacedKey worldKey, xKey, yKey, zKey, yawKey, pitchKey;
