@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Objects;
 
-public class GsonDataType<T> implements PersistentDataType<String, T> {
+public final class GsonDataType<T> implements PersistentDataType<String, T> {
 
     private final TypeAdapter<T> adapter;
     private final Class<T> targetClass;
