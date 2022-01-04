@@ -27,7 +27,7 @@ public class BooleanDataType implements PersistentDataType<Byte, Boolean> {
     private static final byte TRUE = 1, FALSE = 0;
     @Override
     public @NotNull Class<Byte> getPrimitiveType() {
-        return byte.class;
+        return Byte.class;
     }
 
     @Override
