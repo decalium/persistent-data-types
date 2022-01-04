@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.manya"
-version = "1.0.2"
+version = "1.0.21"
 
 
 repositories {
