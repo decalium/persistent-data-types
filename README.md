@@ -41,7 +41,7 @@ And then, add the artifact:
 
 #### gradle
 ```kotlin
-implementation("com.manya:persistent-data-types:1.0.21")
+implementation("com.manya:persistent-data-types:1.0.22")
 ```
 
 #### maven
@@ -49,7 +49,7 @@ implementation("com.manya:persistent-data-types:1.0.21")
 <dependency>
   <groupId>com.manya</groupId>
   <artifactId>persistent-data-types</artifactId>
-  <version>1.0.21</version>
+  <version>1.0.22</version>
 </dependency>
 ```
 
