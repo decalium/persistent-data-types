@@ -1,6 +1,6 @@
 /*
  * persistent-data-types
- * Copyright © 2021 Lesya Morozova
+ * Copyright © 2022 Lesya Morozova
  *
  * persistent-data-types is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,7 +23,7 @@ import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-public class BooleanDataType implements PersistentDataType<Byte, Boolean> {
+public final class BooleanDataType implements PersistentDataType<Byte, Boolean> {
     private static final byte TRUE = 1, FALSE = 0;
     @Override
     public @NotNull Class<Byte> getPrimitiveType() {

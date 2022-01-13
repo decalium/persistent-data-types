@@ -1,6 +1,6 @@
 /*
  * persistent-data-types
- * Copyright © 2021 Lesya Morozova
+ * Copyright © 2022 Lesya Morozova
  *
  * persistent-data-types is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by

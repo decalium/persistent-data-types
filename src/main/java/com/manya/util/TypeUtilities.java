@@ -16,18 +16,16 @@
  * along with persistent-data-types. If not, see <https://www.gnu.org/licenses/>
  * and navigate to version 3 of the GNU Lesser General Public License.
  */
-package com.manya.key;
+package com.manya.util;
 
-import org.bukkit.NamespacedKey;
-import org.jetbrains.annotations.NotNull;
+import java.util.stream.Collector;
 
-final class DecaliumKeyFactory implements KeyFactory { // this is bad.
-    static final String DECALIUM = "decalium";
-    @Override
-    @SuppressWarnings("deprecation")
-    public @NotNull NamespacedKey create(@NotNull String value) {
-        return new NamespacedKey(DECALIUM, value);
+public final class TypeUtilities {
+
+    private TypeUtilities() {}
+
+    @SuppressWarnings("unchecked")
+    public static <T, A, R> Class<R> getCollectionClass(Collector<T, A, R> collector) {
+        return (Class<R>) collector.finisher().apply(collector.supplier().get()).getClass();
     }
-
-
 }

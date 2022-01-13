@@ -1,6 +1,6 @@
 /*
  * persistent-data-types
- * Copyright © 2021 Lesya Morozova
+ * Copyright © 2022 Lesya Morozova
  *
  * persistent-data-types is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -24,6 +24,7 @@ import com.manya.pdc.gson.GsonDataType;
 import com.manya.pdc.base.SerializableDataType;
 import com.manya.pdc.base.collection.primitive.*;
 import com.manya.pdc.gson.CollectionTypeAdapter;
+import com.manya.util.TypeUtilities;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +41,7 @@ public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> imple
 
     public CollectionDataType(Collector<E, A, Z> collector, Class<T> primitiveType) {
         this.collector = collector;
-        this.complexType = getCollectionClass(collector);
+        this.complexType = TypeUtilities.getCollectionClass(collector);
         this.primitiveType = primitiveType;
     }
 
@@ -68,11 +69,6 @@ public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> imple
         return primitiveType;
     }
 
-    @SuppressWarnings("unchecked")
-    private static <T, A, R> Class<R> getCollectionClass(Collector<T, A, R> collector) {
-        return (Class<R>) collector.finisher().apply(collector.supplier().get()).getClass();
-    }
-
 
     @SuppressWarnings("unchecked")
     public static <A, Z extends Collection<E>, E> PersistentDataType<?, Z>
@@ -84,7 +80,7 @@ public abstract class CollectionDataType<A, Z extends Collection<E>, E, T> imple
 
         if(elementDataType instanceof GsonDataType) {
             GsonDataType<E> gsonDataType = (GsonDataType<E>) elementDataType;
-            return new GsonDataType<>(new CollectionTypeAdapter<>(collector, gsonDataType.getAdapter()), getCollectionClass(collector));
+            return new GsonDataType<>(new CollectionTypeAdapter<>(collector, gsonDataType.getAdapter()), TypeUtilities.getCollectionClass(collector));
         }
 
         if(elementDataType instanceof SerializableDataType) {

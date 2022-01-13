@@ -1,6 +1,6 @@
 /*
  * persistent-data-types
- * Copyright © 2021 Lesya Morozova
+ * Copyright © 2022 Lesya Morozova
  *
  * persistent-data-types is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.stream.Collector;
 
-public class FloatCollectionDataType<A, Z extends Collection<E>, E> extends TypeBasedCollectionDataType<A, Z, E, Float, int[]> {
+public final class FloatCollectionDataType<A, Z extends Collection<E>, E> extends TypeBasedCollectionDataType<A, Z, E, Float, int[]> {
     public FloatCollectionDataType(Collector<E, A, Z> collector, PersistentDataType<Float, E> elementDataType) {
         super(collector, int[].class, elementDataType);
     }

@@ -1,6 +1,6 @@
 /*
  * persistent-data-types
- * Copyright © 2021 Lesya Morozova
+ * Copyright © 2022 Lesya Morozova
  *
  * persistent-data-types is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -28,6 +28,7 @@ import com.manya.pdc.gson.GsonDataType;
 import com.manya.pdc.minecraft.ItemStackDataType;
 import com.manya.pdc.minecraft.LocationDataType;
 import com.manya.pdc.minecraft.NamespacedKeyDataType;
+import com.manya.util.MapCollectors;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.Server;
@@ -137,6 +138,54 @@ public final class DataTypes {
     public static <A, Z extends Collection<E>, E> PersistentDataType<?, Z>
     collection(@NotNull Collector<E, A, Z> collector, @NotNull PersistentDataType<?, E> elementDataType) {
         return CollectionDataType.of(collector, elementDataType);
+    }
+
+
+    /**
+     * Creates a new data type for map.
+     * @param collector map collector
+     * @param keyDataType key's data type
+     * @param valueDataType value's data type
+     * @param <A> collector's container type
+     * @param <M> map type
+     * @param <K> key type
+     * @param <V> value type
+     * @return map data type
+     */
+    public static <A, M extends Map<K, V>, K, V> MapDataType<A, M, K, V> map(@NotNull Collector<Map.Entry<K, V>, A, M> collector,
+                                                                             @NotNull PersistentDataType<?, K> keyDataType,
+                                                                             @NotNull PersistentDataType<?, V> valueDataType) {
+        return new MapDataType<>(collector, keyDataType, valueDataType);
+    }
+
+    /**
+     * Creates a new data type for HashMap
+     * @param keyDataType key's data type
+     * @param valueDataType value's data type
+     * @param <K> key type
+     * @param <V> value type
+     * @return map data type
+     */
+    public static <K, V> MapDataType<HashMap<K, V>, HashMap<K, V>, K, V> hashMap(
+            @NotNull PersistentDataType<?, K> keyDataType,
+            @NotNull PersistentDataType<?, V> valueDataType) {
+        return map(MapCollectors.toMap(HashMap::new), keyDataType, valueDataType);
+    }
+
+    /**
+     * Creates a new data type for LinkedHashMap
+     * @param keyDataType key's data type
+     * @param valueDataType value's data type
+     * @param <K> key type
+     * @param <V> value type
+     * @return map data type
+     */
+    public static <K, V> MapDataType<LinkedHashMap<K, V>, LinkedHashMap<K, V>, K, V> linkedHashMap(
+            @NotNull PersistentDataType<?, K> keyDataType,
+            @NotNull PersistentDataType<?, V> valueDataType
+    ) {
+        return map(MapCollectors.toMap(LinkedHashMap::new), keyDataType, valueDataType);
+
     }
 
     /**

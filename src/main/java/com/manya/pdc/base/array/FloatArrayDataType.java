@@ -1,6 +1,6 @@
 /*
  * persistent-data-types
- * Copyright © 2021 Lesya Morozova
+ * Copyright © 2022 Lesya Morozova
  *
  * persistent-data-types is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -25,7 +25,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Float Array Data Type. Uses INT_ARRAY internally.
  */
-public class FloatArrayDataType implements PersistentDataType<int[], float[]> {
+public final class FloatArrayDataType implements PersistentDataType<int[], float[]> {
     @Override
     public @NotNull Class<int[]> getPrimitiveType() {
         return int[].class;

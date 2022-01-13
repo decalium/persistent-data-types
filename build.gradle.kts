@@ -1,10 +1,11 @@
 plugins {
     java
     `maven-publish`
+
 }
 
 group = "com.manya"
-version = "1.0.21"
+version = "1.0.22"
 
 
 repositories {
