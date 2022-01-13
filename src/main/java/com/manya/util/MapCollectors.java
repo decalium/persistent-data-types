@@ -18,7 +18,9 @@
  */
 package com.manya.util;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
@@ -37,8 +39,11 @@ public final class MapCollectors {
      * @param <V> value type
      * @return map collector
      */
-    public static <M extends Map<K, V>, K, V> Collector<Map.Entry<K, V>, ?, M> toMap(BinaryOperator<V> mergeFunction, Supplier<M> factory) {
-        return Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, mergeFunction, factory);
+    public static <M extends Map<K, V>, K, V> Collector<Map.Entry<K, V>, M, M> toMap(BinaryOperator<V> mergeFunction, Supplier<M> factory) {
+        BiConsumer<M, Map.Entry<K, V>> accumulator = (map, element) -> {
+            map.merge(element.getKey(), element.getValue(), mergeFunction);
+        };
+        return Collector.of(factory, accumulator, mapMerger(mergeFunction));
     }
 
     /**
@@ -49,7 +54,16 @@ public final class MapCollectors {
      * @param <V> value type
      * @return map collector
      */
-    public static <M extends Map<K, V>, K, V> Collector<Map.Entry<K, V>, ?, M> toMap(Supplier<M> factory) {
+    public static <M extends Map<K, V>, K, V> Collector<Map.Entry<K, V>, M, M> toMap(Supplier<M> factory) {
         return toMap((e, r) -> e, factory);
+    }
+
+    private static <K, V, M extends Map<K, V>> BinaryOperator<M> mapMerger(BinaryOperator<V> mergeFunction) {
+        return (m1, m2) -> {
+            for (Map.Entry<K, V> e : m2.entrySet()) {
+                m1.merge(e.getKey(), e.getValue(), mergeFunction);
+            }
+            return m1;
+        };
     }
 }
