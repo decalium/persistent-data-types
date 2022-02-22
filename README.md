@@ -56,7 +56,7 @@ implementation("com.manya:persistent-data-types:1.0.22")
 Alternatively, you can just copy classes you need to the project.
 
 
-#Join our discord if you have any questions!
+# Join our discord if you have any questions!
 
 https://discord.gg/VsRz5T67sG
 
