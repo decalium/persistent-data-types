@@ -18,6 +18,15 @@
  */
 package com.manya.util;
 
+import com.manya.key.KeyFactory;
+import com.manya.pdc.DataTypes;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collector;
 
 public final class TypeUtilities {
