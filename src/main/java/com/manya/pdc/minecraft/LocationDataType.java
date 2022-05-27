@@ -36,7 +36,6 @@ import java.util.UUID;
 import static java.util.Objects.*;
 
 public final class LocationDataType implements PersistentDataType<PersistentDataContainer, Location> {
-    private static final float ZERO = 0;
     private final Server server;
     private final NamespacedKey worldKey, xKey, yKey, zKey, yawKey, pitchKey;
     public LocationDataType(@NotNull Server server, @NotNull KeyFactory keyFactory) {
@@ -69,8 +68,8 @@ public final class LocationDataType implements PersistentDataType<PersistentData
         container.set(yKey, PersistentDataType.DOUBLE, complex.getY());
         container.set(zKey, PersistentDataType.DOUBLE, complex.getZ());
 
-        if(complex.getYaw() != ZERO) container.set(yawKey, PersistentDataType.FLOAT, complex.getYaw());
-        if(complex.getPitch() != ZERO) container.set(pitchKey, PersistentDataType.FLOAT, complex.getPitch());
+        if(complex.getYaw() != 0.0F) container.set(yawKey, PersistentDataType.FLOAT, complex.getYaw());
+        if(complex.getPitch() != 0.0F) container.set(pitchKey, PersistentDataType.FLOAT, complex.getPitch());
 
         return container;
     }
@@ -84,8 +83,8 @@ public final class LocationDataType implements PersistentDataType<PersistentData
         double y = requireNonNull(primitive.get(yKey, PersistentDataType.DOUBLE), "y cannot be null");
         double z = requireNonNull(primitive.get(zKey, PersistentDataType.DOUBLE), "z cannot be null");
 
-        float yaw = primitive.getOrDefault(yawKey, PersistentDataType.FLOAT, ZERO);
-        float pitch = primitive.getOrDefault(pitchKey, PersistentDataType.FLOAT, ZERO);
+        float yaw = primitive.getOrDefault(yawKey, PersistentDataType.FLOAT, 0.0F);
+        float pitch = primitive.getOrDefault(pitchKey, PersistentDataType.FLOAT, 0.0F);
 
         return new Location(world, x, y, z, yaw, pitch);
     }
