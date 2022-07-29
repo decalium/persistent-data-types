@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.manya"
-version = "1.0.22"
+version = "1.0.23"
 
 
 repositories {
@@ -15,8 +15,25 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains:annotations:20.1.0")
+    compileOnly("org.jetbrains:annotations:20.1.0")
     compileOnly("io.papermc.paper:paper-api:1.18.1-R0.1-SNAPSHOT")
+}
+
+tasks {
+    compileJava {
+        options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
+        // Set the release flag. This configures what version bytecode the compiler will emit, as well as what JDK APIs are usable.
+        // See https://openjdk.java.net/jeps/247 for more information.
+        options.release.set(17)
+        options.compilerArgs.add("-parameters")
+    }
+
+    javadoc {
+        options.encoding = Charsets.UTF_8.name() // We want UTF-8 for everything
+    }
+    processResources {
+        filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
+    }
 }
 
 
