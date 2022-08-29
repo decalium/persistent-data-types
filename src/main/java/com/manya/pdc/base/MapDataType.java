@@ -27,6 +27,7 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.AbstractMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.stream.Collector;
@@ -82,7 +83,7 @@ public final class MapDataType<A, M extends Map<K, V>, K, V> implements Persiste
         for(PersistentDataContainer pdc : primitive) {
             K key = requireNonNull(pdc.get(KEY, keyDataType), "key must not be null");
             V value = requireNonNull(pdc.get(VALUE, valueDataType), "value most not be null");
-            collector.accumulator().accept(container, Map.entry(key, value));
+            collector.accumulator().accept(container, new AbstractMap.SimpleEntry<>(key, value));
         }
         return collector.finisher().apply(container);
     }

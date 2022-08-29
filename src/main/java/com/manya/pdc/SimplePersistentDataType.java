@@ -18,38 +18,67 @@
  */
 package com.manya.pdc;
 
+import com.google.common.base.MoreObjects;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.function.BiFunction;
+import java.util.Objects;
+import java.util.function.Function;
 
-public record SimplePersistentDataType<T, Z>(Class<T> primitive, Class<Z> complex,
-                                             BiFunction<Z, PersistentDataAdapterContext, T> serializer,
-                                             BiFunction<T, PersistentDataAdapterContext, Z> deserializer)
-        implements PersistentDataType<T, Z> {
+public final class SimplePersistentDataType<T, Z> implements PersistentDataType<T, Z> {
 
-    @Override
-    public @NotNull
-    Class<T> getPrimitiveType() {
-        return primitive;
+    private final Class<T> primitive;
+    private final Class<Z> complex;
+    private final Function<Z, T> toPrimitive;
+    private final Function<T, Z> fromPrimitive;
+
+    public SimplePersistentDataType(Class<T> primitive, Class<Z> complex, Function<Z, T> toPrimitive, Function<T, Z> fromPrimitive) {
+
+        this.primitive = primitive;
+        this.complex = complex;
+        this.toPrimitive = toPrimitive;
+        this.fromPrimitive = fromPrimitive;
     }
 
     @Override
-    public @NotNull
-    Class<Z> getComplexType() {
-        return complex;
+    public @NotNull Class<T> getPrimitiveType() {
+        return this.primitive;
     }
 
     @Override
-    public @NotNull
-    T toPrimitive(@NotNull Z complex, @NotNull PersistentDataAdapterContext context) {
-        return serializer.apply(complex, context);
+    public @NotNull Class<Z> getComplexType() {
+        return this.complex;
     }
 
     @Override
-    public @NotNull
-    Z fromPrimitive(@NotNull T primitive, @NotNull PersistentDataAdapterContext context) {
-        return deserializer.apply(primitive, context);
+    public @NotNull T toPrimitive(@NotNull Z complex, @NotNull PersistentDataAdapterContext context) {
+        return this.toPrimitive.apply(complex);
+    }
+
+    @Override
+    public @NotNull Z fromPrimitive(@NotNull T primitive, @NotNull PersistentDataAdapterContext context) {
+        return this.fromPrimitive.apply(primitive);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimplePersistentDataType<?, ?> that = (SimplePersistentDataType<?, ?>) o;
+        return primitive.equals(that.primitive) && complex.equals(that.complex);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(primitive, complex);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("primitive", primitive)
+                .add("complex", complex)
+                .toString();
     }
 }

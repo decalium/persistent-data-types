@@ -22,29 +22,32 @@ import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-public record IdentityDataType<T>(Class<T> target) implements PersistentDataType<T, T> {
+public final class IdentityDataType<T> implements PersistentDataType<T, T> {
 
-    @Override
-    public @NotNull
-    Class<T> getPrimitiveType() {
-        return target;
+    private final Class<T> clazz;
+
+    public IdentityDataType(Class<T> clazz) {
+
+        this.clazz = clazz;
     }
 
     @Override
-    public @NotNull
-    Class<T> getComplexType() {
-        return target;
+    public @NotNull Class<T> getPrimitiveType() {
+        return clazz;
     }
 
     @Override
-    public @NotNull
-    T toPrimitive(@NotNull T complex, @NotNull PersistentDataAdapterContext context) {
+    public @NotNull Class<T> getComplexType() {
+        return clazz;
+    }
+
+    @Override
+    public @NotNull T toPrimitive(@NotNull T complex, @NotNull PersistentDataAdapterContext context) {
         return complex;
     }
 
     @Override
-    public @NotNull
-    T fromPrimitive(@NotNull T primitive, @NotNull PersistentDataAdapterContext context) {
+    public @NotNull T fromPrimitive(@NotNull T primitive, @NotNull PersistentDataAdapterContext context) {
         return primitive;
     }
 }
