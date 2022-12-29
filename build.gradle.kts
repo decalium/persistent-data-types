@@ -16,6 +16,7 @@ repositories {
 
 dependencies {
     compileOnly("org.jetbrains:annotations:23.0.0")
+    testImplementation("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
     compileOnly("com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT")
 }
 

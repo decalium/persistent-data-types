@@ -46,14 +46,19 @@ public final class StringArrayDataType implements PersistentDataType<byte[], Str
 
     @Override
     public byte @NotNull [] toPrimitive(String @NotNull [] complex, @NotNull PersistentDataAdapterContext context) {
+        byte[][] serializedStrings = new byte[complex.length][];
         int totalSize = 0;
-        for(String s : complex) totalSize += s.length();
-        totalSize += Integer.BYTES * complex.length;
+        for(int i = 0; i < serializedStrings.length; i++) {
+            byte[] b = complex[i].getBytes(charset);
+            totalSize += Integer.BYTES + b.length;
+            serializedStrings[i] = b;
+        }
+
         ByteBuffer buffer = ByteBuffer.allocate(totalSize + Integer.BYTES);
-        buffer.putInt(totalSize);
-        for(String s : complex) {
-            buffer.putInt(s.length());
-            buffer.put(s.getBytes(charset));
+        buffer.putInt(complex.length);
+        for(byte[] b : serializedStrings) {
+            buffer.putInt(b.length);
+            buffer.put(b);
         }
         return buffer.array();
     }
