@@ -49,7 +49,7 @@ implementation("com.manya:persistent-data-types:1.0.24")
 <dependency>
   <groupId>com.manya</groupId>
   <artifactId>persistent-data-types</artifactId>
-  <version>1.0.24</version>
+  <version>1.0.25</version>
 </dependency>
 ```
 
