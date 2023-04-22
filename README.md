@@ -41,7 +41,7 @@ And then, add the artifact:
 
 #### gradle
 ```kotlin
-implementation("com.manya:persistent-data-types:1.0.24")
+implementation("com.manya:persistent-data-types:1.0.25")
 ```
 
 #### maven
@@ -58,7 +58,7 @@ Alternatively, you can just copy classes you need to the project.
 
 # Join our discord if you have any questions!
 
-https://discord.gg/VsRz5T67sG
+https://development.decalium.ru
 
 
 
